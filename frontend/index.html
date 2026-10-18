@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Welcome App</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #dbeafe, #ede9fe);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 420px;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+            color: #1e3a8a;
+        }
+
+        p {
+            text-align: center;
+            color: #64748b;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome App 👋</h1>
+        <p>Enter your details to get started.</p>
+
+        <form id="userForm">
+            <label for="username">Username</label>
+            <input
+                type="text"
+                id="username"
+                maxlength="100"
+                placeholder="Enter your username"
+                required
+            >
+
+            <label for="place">Place</label>
+            <input
+                type="text"
+                id="place"
+                maxlength="100"
+                placeholder="Enter your place"
+                required
+            >
+
+            <button type="submit" id="submitBtn">
+                Submit
+            </button>
+        </form>
+
+        <div id="result" role="status" aria-live="polite" hidden></div>
+    </div>
+
+    <script>
+        // Backend API address for local development
+        const API_URL = "http://localhost:3000";
+
+        const form = document.getElementById("userForm");
+        const result = document.getElementById("result");
+        const submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const username =
+                document.getElementById("username").value.trim();
+
+            const place =
+                document.getElementById("place").value.trim();
+
+            result.hidden = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Saving...";
+
+            try {
+                // Send details to backend
+                const response = await fetch(`${API_URL}/api/users`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, place })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Request failed");
+                }
+
+                // Display the message returned by the backend
+                result.textContent = data.message;
+                result.className = "success";
+                result.hidden = false;
+
+                console.log("Record fetched from database:", data.user);
+
+            } catch (error) {
+                result.textContent =
+                    error.message === "Failed to fetch"
+                        ? "Cannot reach the backend. Check that it is running."
+                        : error.message;
+
+                result.className = "error";
+                result.hidden = false;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit";
+            }
+        });
+    </script>
+</body>
+</html>
