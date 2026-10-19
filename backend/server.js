@@ -72,7 +72,7 @@ async function startServer() {
             const user = rows[0];
 
             res.status(201).json({
-                message: `Welcome ${user.username}! You are from ${user.place}.`,
+                message: `Welcome ${user.username}! You are from ${user.place}. and happy to serve you !!!!`,
                 user
             });
 
