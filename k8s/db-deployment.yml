@@ -1,9 +1,11 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db-deployment
   namespace: dev
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: db
@@ -14,10 +16,11 @@ spec:
     spec:
       containers:
       - name: db
-        image: akshaydevops0504/two-tier-welcome-app:03
+        image: welcome-mysql:v1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3306
-      env:
+        env:
         - name: MYSQL_ROOT_PASSWORD
           value: "RootDbPass123!"
         - name: MYSQL_DATABASE
@@ -26,9 +29,9 @@ spec:
           value: "appuser"
         - name: MYSQL_PASSWORD
           value: "dbuser"
-      volumeMounts:
+        volumeMounts:
         - name: mysql-data
           mountPath: /var/lib/mysql
-    volumes:
-    - name: mysql-data
-      emptyDir: {}
+      volumes:
+      - name: mysql-data
+        emptyDir: {}
