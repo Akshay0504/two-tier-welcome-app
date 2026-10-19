@@ -1,0 +1,32 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace : dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-app
+  template:
+    metadata:
+      labels:
+        app: backend-app
+    spec:
+      containers:
+      - name: backend-app
+        image: akshaydevops0504/two-tier-welcome-app:02
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DB_HOST
+          value: "mysql"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_NAME
+          value: "welcome_app"
+        - name: DB_USER
+          value: "appuser"
+        - name: DB_PASSWORD
+          value: "dbuser"
