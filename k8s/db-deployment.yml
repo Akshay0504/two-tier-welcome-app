@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: db
-        image: welcome-mysql:v1
+        image: akshaydevops0504/two-tier-welcome-app:03
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3306
